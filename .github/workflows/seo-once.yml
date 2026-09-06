@@ -1,0 +1,75 @@
+name: One-time SEO metadata update
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/seo-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  update-seo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update Tetris metadata
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          path = Path("index.html")
+          text = path.read_bytes().decode("utf-8")
+          url = "https://tetris.appsandgames.org/"
+
+          text = re.sub(r'<title>.*?</title>', '<title>Modern Tetris — Free Online Block Puzzle Game | Apps & Games</title>', text, count=1, flags=re.S)
+          text = re.sub(r'<meta\s+name="description"[^>]*>', '<meta name="description" content="Play Modern Tetris free online in your browser. Arrange falling blocks, clear lines and enjoy a responsive classic puzzle game on desktop or mobile.">', text, count=1, flags=re.S)
+          text = re.sub(r'<meta\s+property="og:title"[^>]*>', '<meta property="og:title" content="Modern Tetris — Free Online Block Puzzle Game">', text, count=1, flags=re.S)
+          text = re.sub(r'<meta\s+property="og:description"[^>]*>', '<meta property="og:description" content="Play a modern browser version of the classic falling-block puzzle game on desktop or mobile.">', text, count=1, flags=re.S)
+
+          if f'rel="canonical" href="{url}"' not in text:
+              seo = '''<meta name="robots" content="index, follow" />
+          <link rel="canonical" href="https://tetris.appsandgames.org/" />
+          <meta property="og:url" content="https://tetris.appsandgames.org/" />
+          <meta property="og:site_name" content="Apps & Games" />
+          <meta property="og:image" content="https://appsandgames.org/assets/images/tetris.png" />
+          <meta property="og:image:alt" content="Modern Tetris game preview" />
+          <meta name="twitter:title" content="Modern Tetris | Apps & Games" />
+          <meta name="twitter:description" content="Play a free modern falling-block puzzle game directly in your browser." />
+          <meta name="twitter:image" content="https://appsandgames.org/assets/images/tetris.png" />
+          <script type="application/ld+json">
+          {
+            "@context":"https://schema.org",
+            "@type":["VideoGame","SoftwareApplication"],
+            "name":"Modern Tetris",
+            "url":"https://tetris.appsandgames.org/",
+            "image":"https://appsandgames.org/assets/images/tetris.png",
+            "description":"A free modern browser falling-block puzzle game for desktop and mobile devices.",
+            "applicationCategory":"GameApplication",
+            "gamePlatform":["Web browser","Desktop","Mobile"],
+            "operatingSystem":"Any",
+            "isAccessibleForFree":true,
+            "publisher":{"@type":"Organization","name":"Apps & Games","url":"https://appsandgames.org/"},
+            "offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}
+          }
+          </script>
+          '''
+              marker = '<script type="module"'
+              if marker not in text:
+                  raise SystemExit("Module script marker not found; no SEO block inserted.")
+              text = text.replace(marker, seo + marker, 1)
+
+          path.write_bytes(text.encode("utf-8"))
+          workflow = Path(".github/workflows/seo-once.yml")
+          if workflow.exists():
+              workflow.unlink()
+      - name: Commit SEO update and remove helper workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && exit 0
+          git commit -m "SEO: replace generic Tetris metadata"
+          git push

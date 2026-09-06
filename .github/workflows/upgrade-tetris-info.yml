@@ -31,3 +31,5 @@ jobs:
           git add index.html
           git commit -m "Upgrade Tetris Info design"
           git push
+
+# retry after fixing component boundary

@@ -15,7 +15,7 @@ if anchor not in s:
 s = s.replace('gp=[{coin:"BTC"', info_i18n + 'gp=[{coin:"BTC"', 1)
 
 start_marker = 'vp=({isOpen:m,onClose:b})=>{'
-end_marker = ',yp=({isOpen:m,score:b'
+end_marker = ';var Zs={};'
 start = s.find(start_marker)
 end = s.find(end_marker, start)
 if start < 0 or end < 0:

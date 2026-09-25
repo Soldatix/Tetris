@@ -1,0 +1,19 @@
+{
+  "id": "./",
+  "name": "Modern Tetris — Apps & Games",
+  "short_name": "Modern Tetris",
+  "description": "A free modern falling-block puzzle game for desktop and mobile browsers.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "lang": "en",
+  "categories": ["games", "entertainment"],
+  "prefer_related_applications": false,
+  "icons": [
+    {"src":"./icons/tetris-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
+    {"src":"./icons/tetris-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+  ]
+}

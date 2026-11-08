@@ -430,9 +430,39 @@ Error generating stack: `+l.message+`
 <link rel="stylesheet" href="./ag-language-menu.css">
 <link rel="icon" type="image/png" sizes="192x192" href="./icons/tetris-192.png">
 <link rel="apple-touch-icon" href="./icons/tetris-192.png">
+    <!-- Ad slot is in normal flow ABOVE the Tetris intro, not over controls. -->
+    <style id="tetris-ad-placement">
+      #tetris-ad-area[hidden], .tetris-ad-unit[hidden] { display: none !important; }
+      #tetris-ad-area { position: relative; z-index: 1; display: flex;
+        align-items: center; justify-content: center; width: 100%;
+        max-width: 100%; padding: max(10px, env(safe-area-inset-top, 0px)) 0 8px;
+        background: #020617; }
+      .tetris-ad-unit { display: flex; flex-direction: column; align-items: center;
+        max-width: 100%; min-width: 0; text-align: center; }
+      .tetris-ad-label { color: #94a3b8; font: 11px/1.4 system-ui, sans-serif;
+        padding-bottom: 5px; }
+      html.tetris-game-active #tetris-ad-area,
+      html.tetris-game-active #tetris-privacy-footer { display: none !important; }
+      #tetris-privacy-footer { display: flex; justify-content: center;
+        align-items: center; padding: 6px 12px 14px;
+        text-align: center; color: #cbd5e1; background: #020617; }
+      #tetris-privacy-footer .ag-privacy-footer-control {
+        color: #7dd3fc; cursor: pointer; padding: 8px 12px; }
+    </style>
+    <link rel="stylesheet" href="https://appsandgames.org/privacy-choice.css" />
+    <script defer src="https://appsandgames.org/privacy-choice.js"></script>
 </head>
   <body>
+    <section id="tetris-ad-area" aria-label="Advertisement" hidden>
+      <div class="tetris-ad-unit" data-size="728x90" hidden>
+        <script src="./tetris-adsterra-loader.js" data-unit="desktop"></script>
+      </div>
+      <div class="tetris-ad-unit" data-size="320x50" hidden>
+        <script src="./tetris-adsterra-loader.js" data-unit="mobile"></script>
+      </div>
+    </section>
     <div id="root"></div>
+    <footer id="tetris-privacy-footer" class="footer-links" aria-label="Privacy choices"></footer>
     <script>
       (() => {
         const root = document.documentElement;

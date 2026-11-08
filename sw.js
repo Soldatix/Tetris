@@ -1,4 +1,4 @@
-const CACHE_NAME = "modern-tetris-2026-09-25-v7";
+const CACHE_NAME = "modern-tetris-2026-11-08-ad-v8";
 const CORE_ASSETS = [
   "./",
   "./index.html",
@@ -7,6 +7,7 @@ const CORE_ASSETS = [
   "./ag-language-menu.js",
   "./tetris-safe-ui.js",
   "./tetris-safe-pwa.js",
+  "./tetris-adsterra-loader.js",
   "./icons/tetris-192.png",
   "./icons/tetris-512.png"
 ];

@@ -1,0 +1,8 @@
+# Static single-file Tetris website is served from repository root.
+# Prevent source/deployment metadata from becoming public assets.
+.git/
+.github/
+README.md
+wrangler.jsonc
+.assetsignore
+*.md

@@ -1,7 +1,22 @@
-const CACHE_NAME = "modern-tetris-2026-11-08-ad-v8";
+const CACHE_NAME = "modern-tetris-2026-11-26-seo-offline-v9";
+const APP_ENTRY = new URL('./', self.location.href).href;
+const APP_PATH = new URL(APP_ENTRY).pathname;
+const LEGACY_PATH = new URL('index.html', APP_ENTRY).pathname;
+const entryRequest = () => new Request(APP_ENTRY, { cache: 'reload', redirect: 'error' });
+const cachedEntry = async () => (await caches.open(CACHE_NAME)).match(APP_ENTRY);
+async function navigationNetworkFirst(request) {
+  let response;
+  try { response = await fetch(request); }
+  catch { return (await cachedEntry()) || Response.error(); }
+  if (!response.ok && response.type !== 'opaqueredirect') return (await cachedEntry()) || response;
+  if (response.ok && !response.redirected && response.url === APP_ENTRY &&
+      (response.headers.get('content-type') || '').toLowerCase().includes('text/html')) {
+    try { await (await caches.open(CACHE_NAME)).put(APP_ENTRY, response.clone()); } catch {}
+  }
+  return response;
+}
 const CORE_ASSETS = [
-  "./",
-  "./index.html",
+  entryRequest(),
   "./manifest.webmanifest",
   "./ag-language-menu.css",
   "./ag-language-menu.js",
@@ -31,26 +46,8 @@ self.addEventListener("fetch",(event) => {
   if (url.origin !== self.location.origin) return;
 
   if (request.mode === "navigate") {
-    event.respondWith(
-      fetch(request)
-        .then(async (response) => {
-          if (!response.ok) {
-            const cached = await caches.match("./index.html");
-            return cached || response;
-          }
-
-          const copy = response.clone();
-
-          event.waitUntil(
-            caches
-              .open(CACHE_NAME)
-              .then((cache) => cache.put("./index.html", copy))
-          );
-
-          return response;
-        })
-        .catch(() => caches.match("./index.html"))
-    );
+    if (url.pathname !== APP_PATH && url.pathname !== LEGACY_PATH) return;
+    event.respondWith(navigationNetworkFirst(request));
     return;
   }
 
